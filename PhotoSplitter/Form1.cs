@@ -35,6 +35,7 @@ namespace PhotoSplitter
 
         private void btnLine_Click(object sender, EventArgs e)
         {
+            pictureBox1.Refresh();
             DrawLine();
         }
 
@@ -81,32 +82,48 @@ namespace PhotoSplitter
             using (Graphics g = pictureBox1.CreateGraphics())
             {
                 int ix = 1;
-                while ((LineDisplayHeight * ix) < displayHeight)
+                int offsetIx = 0;
+                while (((LineDisplayHeight * ix) - (offsetHeight * offsetIx)) < displayHeight)
                 {
                     float[] dashValues = { 8, 4, 8, 4 };
-                    Pen pBlack = new Pen(Color.Gray, 1);
+                    Pen pBlack = new Pen(Color.Yellow, 1);
                     pBlack.DashPattern = dashValues;
-                    g.DrawLine(pBlack,0, (ix * LineDisplayHeight), displayWidth, (ix * LineDisplayHeight));
 
-                    g.DrawLine(Pens.Red, 0, (float)((ix * LineDisplayHeight) - offsetHeight), 
-                                displayWidth, (float)((ix * LineDisplayHeight)) - offsetHeight);
-                    g.DrawLine(Pens.Red, 0, (float)((ix * LineDisplayHeight) + offsetHeight), 
-                                displayWidth, (float)((ix * LineDisplayHeight)) + offsetHeight);
+                    offsetIx = (ix - 1);
+                    offsetIx = (offsetIx > 0) ? offsetIx : 0;
+                    float X1 = 0;
+                    float X2 = displayWidth;
+                    float Y1 = (ix * LineDisplayHeight) - (offsetHeight * offsetIx);
+                    float Y2 = (ix * LineDisplayHeight) - (offsetHeight * offsetIx);
+                    g.DrawLine(pBlack, X1, Y1, X2, Y2);
+
+                    Y1 = (float)((ix * LineDisplayHeight) - (offsetHeight * ix));
+                    Y2 = (float)((ix * LineDisplayHeight) - (offsetHeight * ix));
+                    g.DrawLine(Pens.Red, X1, Y1, X2, Y2);
+
                     ix++;
                 }
 
                 int iy = 1;
-                while ((LineDisplayWidth * iy) < displayWidth)
+                int offsetIy = 0;
+                while (((LineDisplayWidth * iy) - (offsetWidth * offsetIy)) < displayWidth)
                 {
                     float[] dashValues = { 8, 4, 8, 4 };
-                    Pen pBlack = new Pen(Color.Gray, 1);
+                    Pen pBlack = new Pen(Color.Yellow, 1);
                     pBlack.DashPattern = dashValues;
-                    g.DrawLine(pBlack, (iy * LineDisplayWidth), 0, (iy * LineDisplayWidth), displayHeight);
 
-                    g.DrawLine(Pens.Red, (float)((iy * LineDisplayWidth) - offsetWidth), 0,
-                                (float)((iy * LineDisplayWidth) - offsetWidth), displayHeight);
-                    g.DrawLine(Pens.Red, (float)((iy * LineDisplayWidth) + offsetWidth), 0,
-                                (float)((iy * LineDisplayWidth) + offsetWidth), displayHeight);
+                    offsetIy = (iy - 1);
+                    offsetIy = (offsetIy > 0) ? offsetIy : 0;
+                    float X1 = (iy * LineDisplayWidth) - (offsetWidth * offsetIy);
+                    float X2 = (iy * LineDisplayWidth) - (offsetWidth * offsetIy);
+                    float Y1 = 0;
+                    float Y2 = displayHeight;
+                    g.DrawLine(pBlack, X1, Y1, X2, Y2);
+
+                    X1 = (float)((iy * LineDisplayWidth) - (offsetWidth * iy));
+                    X2 = (float)((iy * LineDisplayWidth) - (offsetWidth * iy));
+                    g.DrawLine(Pens.Red, X1, Y1, X2, Y2);
+
                     iy++;
                 }
             }
@@ -143,17 +160,17 @@ namespace PhotoSplitter
 
             int iy = 0;
             int Count = 1;
-            while ((LineCropHeight * iy) < ImageSizeHeight)
+            while (((LineCropHeight * iy) - (offsetHeight * iy)) < ImageSizeHeight)
             {
                 int ix = 0;
-                while ((LineCropWidth * ix) < ImageSizeWidth) 
+                while (((LineCropWidth * ix) - (offsetWidth * ix)) < ImageSizeWidth) 
                 {
                     Bitmap target = new Bitmap((int)LineCropWidth, (int)LineCropHeight);
 
                     using (Graphics g = Graphics.FromImage(target))
                     {
-                        int startX = (int)(LineCropWidth * ix - offsetWidth);
-                        int startY = (int)(LineCropHeight * iy - offsetHeight);
+                        int startX = (int)(LineCropWidth * ix - offsetWidth * ix);
+                        int startY = (int)(LineCropHeight * iy - offsetHeight * iy);
 
                         if (startX < 0) startX = 0;
                         if (startY < 0) startY = 0;
